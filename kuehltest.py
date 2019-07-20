@@ -66,7 +66,7 @@ def messung_eintragen(kuehlvariante, datensatz, last):
                variante=kuehlvariante,
                last=last,
                cpu_temp=datensatz["cpu_temp"],
-               cpu_takt=datensatz["cpu_takt"])
+               cpu_takt=datensatz["cpu_takt"]).execute()
     pprint(datensatz)
 
 
