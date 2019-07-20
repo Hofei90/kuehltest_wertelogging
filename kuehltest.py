@@ -5,6 +5,7 @@ import datetime
 import time
 from subprocess import Popen
 from sys import argv
+from pprint import pprint
 
 DAUER_IDLE = 120  # in Sekunden
 DAUER_LAST = 120  # in Sekunden
@@ -44,7 +45,7 @@ def messung_eintragen(kuehlvariante, datensatz):
                variante=kuehlvariante,
                cpu_temp=datensatz["cpu_temp"],
                cpu_takt=datensatz["cpu_takt"])
-
+    pprint(datensatz)
 
 def messen_im_idle(kuehlvariante_id):
     start = datetime.datetime.now()
