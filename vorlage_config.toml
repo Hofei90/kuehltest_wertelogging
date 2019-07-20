@@ -1,0 +1,4 @@
+token = <TELEGRAMTOKEN> # None = Deaktiviert
+telegramids = [<id>]  # Telegramids zur Benachrichtigung
+
+ablauf = [<ABLAUFSTEUERUNG>]  # 0=Idle, 1=Last Beispiel: [0, 1, 0]

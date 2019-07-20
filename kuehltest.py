@@ -6,10 +6,23 @@ import time
 from subprocess import Popen
 from sys import argv
 from pprint import pprint
-
+from telegram_api.telegram_bot_api import Bot
+import os
+import toml
 DAUER_IDLE = 60  # in Sekunden
 DAUER_LAST = 60  # in Sekunden
 MESSINTERVALL = 5  # in Sekunden
+
+
+def load_config():
+    configfile = os.path.join(SKRIPTPFAD, "config.toml")
+    with open(configfile) as conffile:
+        config = toml.loads(conffile.read())
+    return config
+
+
+SKRIPTPFAD = os.path.abspath(os.path.dirname(__file__))
+CONFIG = load_config()
 
 
 def eingabe_anfordern(text):
@@ -73,9 +86,15 @@ def main():
     except IndexError:
         kuehlvariante = eingabe_anfordern("Welche Kühlvariante wird verwendet: ")
     kuehlvariante_id = kuehlvariante_holen_db(kuehlvariante)
-    messen_im_idle(kuehlvariante_id)
-    messen_unter_last(kuehlvariante_id)
-    messen_im_idle(kuehlvariante_id)
+    for ablauf in CONFIG["ablauf"]:
+        if ablauf:
+            messen_unter_last(kuehlvariante_id)
+        else:
+            messen_im_idle(kuehlvariante_id)
+    if CONFIG["token"] is not None:
+        bot = Bot(CONFIG["token"])
+        for id in CONFIG["telegramids"]:
+            bot.send_message(id, "Durchlauf fertig")
 
 
 if __name__ == "__main__":
