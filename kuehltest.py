@@ -48,16 +48,17 @@ def messung_eintragen(kuehlvariante, datensatz, last):
                cpu_takt=datensatz["cpu_takt"])
     pprint(datensatz)
 
-def messen_im_idle(kuehlvariante_id):
+
+def messen_im_idle(kuehlvariante_id, dauer_idle=DAUER_IDLE):
     start = datetime.datetime.now()
-    while (datetime.datetime.now() - start).total_seconds() < DAUER_IDLE:
+    while (datetime.datetime.now() - start).total_seconds() < dauer_idle:
         datensatz = messung_starten()
         messung_eintragen(kuehlvariante_id, datensatz, False)
         time.sleep(MESSINTERVALL)
 
 
-def messen_unter_last(kuehlvarante_id):
-    befehl = "stress -c 4 -i 1 -m 1 -t {}s".format(DAUER_LAST)
+def messen_unter_last(kuehlvarante_id, dauer_last=DAUER_LAST):
+    befehl = "stress -c 4 -i 1 -m 1 -t {}s".format(dauer_last)
     prozess = Popen(befehl, shell=True)
     while prozess.poll() is None:
         datensatz = messung_starten()
@@ -74,6 +75,7 @@ def main():
     kuehlvariante_id = kuehlvariante_holen_db(kuehlvariante)
     messen_im_idle(kuehlvariante_id)
     messen_unter_last(kuehlvariante_id)
+    messen_im_idle(kuehlvariante_id)
 
 
 if __name__ == "__main__":
