@@ -1,15 +1,17 @@
-import psutil
-from db_modell import Kuehlvarianten, Log, db_create_table
-from peewee import fn
 import datetime
+import os
+import shlex
 import time
+from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv
-from pprint import pprint
-from telegram_api.telegram_bot_api import Bot
-import os
+
+import psutil
 import toml
-import shlex
+from peewee import fn
+
+from db_modell import Kuehlvarianten, Log, db_create_table
+from telegram_api.telegram_bot_api import Bot
 
 MESSINTERVALL = 5  # in Sekunden
 
@@ -66,7 +68,9 @@ def messung_eintragen(kuehlvariante, datensatz, last):
                variante=kuehlvariante,
                last=last,
                cpu_temp=datensatz["cpu_temp"],
-               cpu_takt=datensatz["cpu_takt"]).execute()
+               cpu_takt=datensatz["cpu_takt"],
+               vcgencmd_temp=datensatz["vcgencmd_temp"],
+               vcgencmd_takt=datensatz["vcgencmd_takt"]).execute()
     pprint(datensatz)
 
 
