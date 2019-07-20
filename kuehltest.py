@@ -9,8 +9,7 @@ from pprint import pprint
 from telegram_api.telegram_bot_api import Bot
 import os
 import toml
-DAUER_IDLE = 60  # in Sekunden
-DAUER_LAST = 60  # in Sekunden
+
 MESSINTERVALL = 5  # in Sekunden
 
 
@@ -62,7 +61,7 @@ def messung_eintragen(kuehlvariante, datensatz, last):
     pprint(datensatz)
 
 
-def messen_im_idle(kuehlvariante_id, dauer_idle=DAUER_IDLE):
+def messen_im_idle(kuehlvariante_id, dauer_idle):
     start = datetime.datetime.now()
     while (datetime.datetime.now() - start).total_seconds() < dauer_idle:
         datensatz = messung_starten()
@@ -70,7 +69,7 @@ def messen_im_idle(kuehlvariante_id, dauer_idle=DAUER_IDLE):
         time.sleep(MESSINTERVALL)
 
 
-def messen_unter_last(kuehlvarante_id, dauer_last=DAUER_LAST):
+def messen_unter_last(kuehlvarante_id, dauer_last):
     befehl = "stress -c 4 -i 1 -m 1 -t {}s".format(dauer_last)
     prozess = Popen(befehl, shell=True)
     while prozess.poll() is None:
@@ -87,10 +86,10 @@ def main():
         kuehlvariante = eingabe_anfordern("Welche Kühlvariante wird verwendet: ")
     kuehlvariante_id = kuehlvariante_holen_db(kuehlvariante)
     for ablauf in CONFIG["ablauf"]:
-        if ablauf:
-            messen_unter_last(kuehlvariante_id)
+        if ablauf[0]:
+            messen_unter_last(kuehlvariante_id, ablauf[1])
         else:
-            messen_im_idle(kuehlvariante_id)
+            messen_im_idle(kuehlvariante_id, ablauf[1])
     if CONFIG["token"] is not None:
         bot = Bot(CONFIG["token"])
         for id_ in CONFIG["telegramids"]:
