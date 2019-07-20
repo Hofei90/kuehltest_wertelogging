@@ -35,7 +35,7 @@ def kuehlvariante_holen_db(kuehlvariante):
 
 def messung_starten():
     datensatz = {"ts": datetime.datetime.now(),
-                 "cpu_temp": psutil.sensors_temperatures(),
+                 "cpu_temp": psutil.sensors_temperatures()["cpu-thermal"][0].current,
                  "cpu_takt": psutil.cpu_freq().current}
     return datensatz
 
