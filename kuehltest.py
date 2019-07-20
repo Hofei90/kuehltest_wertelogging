@@ -3,12 +3,13 @@ from db_modell import Kuehlvarianten, Log, db_create_table
 from peewee import fn
 import datetime
 import time
-from subprocess import Popen
+from subprocess import Popen, PIPE
 from sys import argv
 from pprint import pprint
 from telegram_api.telegram_bot_api import Bot
 import os
 import toml
+import shlex
 
 MESSINTERVALL = 5  # in Sekunden
 
@@ -46,9 +47,17 @@ def kuehlvariante_holen_db(kuehlvariante):
 
 
 def messung_starten():
+    temp_prozess = Popen(shlex.split("vcgencmd measure_temp"), stdout=PIPE)
+    temp = temp_prozess.stdout.read().decode("utf-8").strip().split("=")[1].split("'")[0]
+    temp = float(temp)
+    takt_prozess = Popen(shlex.split("vcgencmd measure_clock arm"), stdout=PIPE)
+    takt = int(takt_prozess.stdout.read().decode("utf-8").strip().split("=")[1])
+    takt = round(takt / 1000000, 1)
     datensatz = {"ts": datetime.datetime.now(),
                  "cpu_temp": psutil.sensors_temperatures()["cpu-thermal"][0].current,
-                 "cpu_takt": psutil.cpu_freq().current}
+                 "cpu_takt": psutil.cpu_freq().current,
+                 "vcgencmd_temp": temp,
+                 "vcgencmd_takt": takt}
     return datensatz
 
 
@@ -71,7 +80,7 @@ def messen_im_idle(kuehlvariante_id, dauer_idle):
 
 def messen_unter_last(kuehlvarante_id, dauer_last):
     befehl = "stress -c 4 -i 1 -m 1 -t {}s".format(dauer_last)
-    prozess = Popen(befehl, shell=True)
+    prozess = Popen(shlex.split(befehl))
     while prozess.poll() is None:
         datensatz = messung_starten()
         messung_eintragen(kuehlvarante_id, datensatz, True)

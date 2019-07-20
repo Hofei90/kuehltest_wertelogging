@@ -23,6 +23,8 @@ class Log(BaseModel):
     last = peewee.BooleanField()
     cpu_temp = peewee.FloatField()
     cpu_takt = peewee.FloatField()
+    vcgencmd_temp = peewee.FloatField()
+    vcgencmd_takt = peewee.FloatField()
 
 
 def db_create_table():
