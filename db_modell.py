@@ -20,6 +20,7 @@ class Kuehlvarianten(BaseModel):
 class Log(BaseModel):
     ts = peewee.DateTimeField(primary_key=True)
     variante = peewee.IntegerField()
+    last = peewee.BooleanField()
     cpu_temp = peewee.FloatField()
     cpu_takt = peewee.FloatField()
 

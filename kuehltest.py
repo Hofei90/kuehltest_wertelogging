@@ -7,9 +7,9 @@ from subprocess import Popen
 from sys import argv
 from pprint import pprint
 
-DAUER_IDLE = 120  # in Sekunden
-DAUER_LAST = 120  # in Sekunden
-MESSINTERVALL = 10  # in Sekunden
+DAUER_IDLE = 60  # in Sekunden
+DAUER_LAST = 60  # in Sekunden
+MESSINTERVALL = 5  # in Sekunden
 
 
 def eingabe_anfordern(text):
@@ -40,9 +40,10 @@ def messung_starten():
     return datensatz
 
 
-def messung_eintragen(kuehlvariante, datensatz):
+def messung_eintragen(kuehlvariante, datensatz, last):
     Log.insert(ts=datensatz["ts"],
                variante=kuehlvariante,
+               last=last,
                cpu_temp=datensatz["cpu_temp"],
                cpu_takt=datensatz["cpu_takt"])
     pprint(datensatz)
@@ -51,7 +52,7 @@ def messen_im_idle(kuehlvariante_id):
     start = datetime.datetime.now()
     while (datetime.datetime.now() - start).total_seconds() < DAUER_IDLE:
         datensatz = messung_starten()
-        messung_eintragen(kuehlvariante_id, datensatz)
+        messung_eintragen(kuehlvariante_id, datensatz, False)
         time.sleep(MESSINTERVALL)
 
 
@@ -60,7 +61,7 @@ def messen_unter_last(kuehlvarante_id):
     prozess = Popen(befehl, shell=True)
     while prozess.poll() is None:
         datensatz = messung_starten()
-        messung_eintragen(kuehlvarante_id, datensatz)
+        messung_eintragen(kuehlvarante_id, datensatz, True)
         time.sleep(MESSINTERVALL)
 
 
