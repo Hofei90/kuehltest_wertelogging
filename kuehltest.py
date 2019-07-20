@@ -57,7 +57,7 @@ def messen_im_idle(kuehlvariante_id):
 
 def messen_unter_last(kuehlvarante_id):
     befehl = "stress -c 4 -i 1 -m 1 -t {}s".format(DAUER_LAST)
-    prozess = Popen(befehl)
+    prozess = Popen(befehl, shell=True)
     while prozess.poll() is None:
         datensatz = messung_starten()
         messung_eintragen(kuehlvarante_id, datensatz)
