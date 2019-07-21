@@ -1,10 +1,9 @@
-
-import os
 import peewee
+import db_modell as db
 
-
-SKRIPTPFAD = os.path.abspath(os.path.dirname(__file__))
-DB = peewee.SqliteDatabase(os.path.join(SKRIPTPFAD, "kuehltest_log.db3"))
+user = input("PGUser eingeben:")
+pw = input("Passwort eingeben: ")
+DB = peewee.PostgresqlDatabase("kuehltest", user=user, password=pw)
 
 
 class BaseModel(peewee.Model):
@@ -31,3 +30,17 @@ class Log(BaseModel):
 
 def db_create_table():
     DB.create_tables([Kuehlvarianten, Log])
+
+
+def main():
+    db_create_table()
+    kuehlvarianten = db.Kuehlvarianten.select().dicts()
+    for data in kuehlvarianten:
+        Kuehlvarianten.create(**data)
+    log = db.Log.select().dicts()
+    for data in log:
+        Log.create(**data)
+
+
+if __name__ == "__main__":
+    main()
