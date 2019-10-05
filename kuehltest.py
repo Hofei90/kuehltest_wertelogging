@@ -103,7 +103,7 @@ def main():
             messen_unter_last(kuehlvariante_id, ablauf[1])
         else:
             messen_im_idle(kuehlvariante_id, ablauf[1])
-    if CONFIG["token"] is not None:
+    if CONFIG["token"]:
         bot = Bot(CONFIG["token"])
         for id_ in CONFIG["telegramids"]:
             bot.send_message(id_, "Durchlauf fertig")
