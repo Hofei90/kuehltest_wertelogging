@@ -1,8 +1,6 @@
 from db_modell import Log, Kuehlvarianten, db_create_table
 import datetime
 
-NOW = datetime.datetime.now()
-
 
 def main():
     db_create_table()
@@ -19,13 +17,13 @@ def main():
             if datensatz.nummer is None:
                 datensatz.nummer = nr
                 datensatz.save()
-            if datensatz.fake_ts is None:
-                ts = datetime.datetime(year=NOW.year, month=NOW.month, day=NOW.day,
-                                       hour=0, minute=0, second=0, microsecond=0)
-                delta = datetime.timedelta(seconds=nr * 5)
-                ts = ts + delta
-                datensatz.fake_ts = ts
-                datensatz.save()
+            # if datensatz.fake_ts is None:
+            ts = datetime.datetime(year=2019, month=7, day=21,
+                                   hour=0, minute=0, second=0, microsecond=0)
+            delta = datetime.timedelta(seconds=nr * 5)
+            ts = ts + delta
+            datensatz.fake_ts = ts
+            datensatz.save()
 
 
 if __name__ == "__main__":
