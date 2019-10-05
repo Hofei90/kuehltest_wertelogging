@@ -36,10 +36,16 @@ def main():
     db_create_table()
     kuehlvarianten = db.Kuehlvarianten.select().dicts()
     for data in kuehlvarianten:
-        Kuehlvarianten.create(**data)
+        try:
+            Kuehlvarianten.create(**data)
+        except peewee.IntegrityError:
+            continue
     log = db.Log.select().dicts()
     for data in log:
-        Log.create(**data)
+        try:
+            Log.create(**data)
+        except peewee.IntegrityError:
+            continue
 
 
 if __name__ == "__main__":
